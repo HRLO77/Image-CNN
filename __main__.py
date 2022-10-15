@@ -118,8 +118,8 @@ def predict(fp: str, loc: bool=False, acc: float=0.80):
         q = queue.Queue(0)
         def square_up(image: Image.Image, start: tuple[int, int]):
             d=[]
-            for x in range(image.width)[::acc]:
-                for y in range(image.height)[::acc]:
+            for x in range(image.width-start[0])[::acc]:
+                for y in range(image.height-start[1])[::acc]:
                     i = image.crop((*start, start[0]+y, start[1]+x))
                     d.append((model.predict([load_image(img=i)]), (*start, start[0]+y, start[1]+x)))
                     i.close()
