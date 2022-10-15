@@ -82,7 +82,7 @@ def load_model():
     model.load_weights('./model.h5')
     return model
 
-"""model = Sequential((
+model = Sequential((
     layers.Conv2D(32, (3, 3), activation='relu', input_shape=(100, 100, 3)),
     layers.MaxPool2D((2,2)),
     layers.Conv2D(64, (3, 3), activation='relu'),
@@ -102,9 +102,9 @@ model.summary()
 
 model.fit(data, labels, epochs=9)
 
-model.save_weights(f"./model_{datetime.datetime.utcnow().strftime('%y-%m-%d_%R-%S').replace(':', '-')}.h5")"""
+model.save_weights(f"./model_{datetime.datetime.utcnow().strftime('%y-%m-%d_%R-%S').replace(':', '-')}.h5")
 
-model = load_model()
+# model = load_model()
 
 def predict(fp: str, loc: bool=False, acc: float=0.80):
     '''Predicts type of image, by fp provided.
