@@ -79,13 +79,43 @@ To make predictions, load or train a model (follow previous steps) and run the `
 
 # __main__.py 
 
-def predict(fp: str):
-    '''Predicts type of image, by fp provided.'''
+def predict(fp: str, loc: bool=False, acc: float=0.80):
+    '''Predicts type of image, by fp provided.
+    :param loc: Whether or not the object should be located in the image. When locating, returns tuple[list[tuple[np.ndarray[int, int], tuple[int, int, int, int]]], tuple[int, int]] representing a list of tuples, first item being a probability of the zone being 1, and the 4 int tuple being the box of the zone.
+    :param acc: The accuracy of locating the image, as a float between 0.0001 and 1.
+    :param fp: File path to image to predict.'''
+    if loc:
+        img = Image.open(fp)
+        img = img.convert('RGB')
+        acc=math.ceil((1-acc-0.0001)*1000)
+        q = queue.Queue(0)
+        def square_up(image: Image.Image, start: tuple[int, int]):
+            d=[]
+            for x in range(image.width)[::acc]:
+                for y in range(image.height)[::acc]:
+                    i = image.crop((*start, start[0]+y, start[1]+x))
+                    d.append((model.predict([load_image(img=i)]), (*start, start[0]+y, start[1]+x)))
+                    i.close()
+            q.put_nowait(d)
+        def s():
+            dat = []
+            for x in range(img.width)[::acc]:
+                for y in range(img.height)[::acc]:
+                    t = threading.Thread(target=square_up, args=(img, (x,y)))
+                    t.start()
+            t.join()
+            while True:
+                try:
+                    dat += q.get_nowait()
+                except Exception:
+                    break
+            return [(dat[i][0], dat[i][1]) for i in reversed(np.argsort([i[0][0][1] for i in dat]))], model.predict([load_image(fp)])
+        return s()  
     return model.predict([load_image(fp)])
 
 
 print(predict('./images/cat_20.jpeg'))
-print(predict('./images/dog_20.jpeg'))
+print(predict('./images/dog_20.jpeg', loc=True))
 ```
 
 For example, `predict('./images/test_car_image.jpeg')`.
