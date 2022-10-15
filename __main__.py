@@ -1,5 +1,3 @@
-# import tensorflow as tf
-from telnetlib import SE
 import numpy as np
 import re
 import os
@@ -9,12 +7,7 @@ from PIL import Image
 from keras import Sequential
 from keras import layers
 from keras import losses
-# from keras.datasets import cifar10
 os.system('cls||clear')
-
-# (train_images, train_labels), (test_images, test_labels) = cifar10.load_data()
-# print(train_images[0])
-# exit()
 
 def load_image(fp: str):
     '''Loads a single image.'''
