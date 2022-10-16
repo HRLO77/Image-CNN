@@ -89,6 +89,7 @@ def predict(fp: str, loc: bool=False, acc: float=.9):
         img = img.convert('RGB')
         acc=math.ceil((1-acc-0.0001)*1000)
         q = queue.Queue(0)
+        num_threads=queue.LifoQueue(0)
         def square_up(image: Image.Image, start: tuple[int, int]):
             d=[]
             for x in range(image.width)[::acc]:
@@ -100,15 +101,20 @@ def predict(fp: str, loc: bool=False, acc: float=.9):
                     i.close()
                 if start[1]+x > image.width:
                     break
+            num_threads.put_nowait(1)
             q.put_nowait(d)
         def s():
             dat = []
+            m = len(range(img.width)[::acc])*len(range(img.height)[::acc])
+            num_len = 0
             for x in range(img.width)[::acc]:
                 for y in range(img.height)[::acc]:
                     t = threading.Thread(target=square_up, args=(img, (x,y)))
                     t.start()
-            t.join()
-            __import__('time').sleep((100/(acc/10))+(10/(acc/10)))
+            t.join()            
+            while num_len != m:
+                __import__('time').sleep(0.1)
+                num_len = num_threads.qsize()
             while True:
                 try:
                     dat += q.get_nowait()
@@ -124,4 +130,4 @@ print(predict('./images/cat_20.jpeg'))
 print(predict('./images/dog_20.jpeg', loc=True))
 ```
 
-For example, `predict('./images/test_car_image.jpeg')`.
+For example, `predict('./images/test_car_image.jpeg', loc=True, acc=.8)`.
