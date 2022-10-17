@@ -132,10 +132,6 @@ def predict(fp: str, loc: bool=False, acc: float=.9, reverse: bool=False, reduce
             open(name, 'x')
             pk.dump((dat, prediction), open(name, 'wb'))
         data: list[tuple[np.ndarray, tuple[int, int, int, int]]] = [(dat[i][0], dat[i][1]) for i in reversed(np.argsort([i[0][0][0] if reverse else i[0][0][1] for i in dat]))]
-        m = []
-        for tup2 in data[:4]:
-            m.append(tup2[0][0][1])
-        m = sum(m) / len(m)
         largest = []
         for i in range(4):
             l=[]
