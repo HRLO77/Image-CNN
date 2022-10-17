@@ -1,9 +1,9 @@
 from PIL import Image
 # print(i%2)[0, 200, 0, 300] (==0), [100, 0, 200, 0] (==1), [100, 200, 200, 300] (2 comp), [200, 200, 200, 400] (1 comp)
 
-image = Image.open('./images/dog_20.jpeg')
+image = Image.open('./images/dog_60.jpeg')
 
-image = image.crop((100, 0, 200, 300))
+image = image.reduce(2).crop([25, 25, 100, 100])
 
 s=''
 for y in range(image.height):
