@@ -96,7 +96,7 @@ model.summary()
 
 model.fit(data, labels, epochs=9)
 
-model.save_weights(f"./model_{datetime.datetime.utcnow().strftime('%y-%m-%d_%R-%S').replace(':', '-')}.h5")"""
+model.save_weights(f"./model_{datetime.datetime.utcnow().strftime('%y-%m-%d_%R-%S').replace(':', '-')}.h5", overwrite=True)"""
 
 model = load_model()
 
